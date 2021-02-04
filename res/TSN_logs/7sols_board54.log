@@ -1,0 +1,1 @@
+"data": [{"id": 86, "ts": "568053830.985652Z", "sync_min": -33, "sync_max": 36, "sync_mean": 0, "link_delay_0": 0, "link_delay_1": 440, "link_delay_2": 0, "link_delay_3": 0, "port_role_0": 0, "port_role_1": 9, "port_role_2": 0, "port_role_3": 0, "node_status": 2, "GM": "TSN08", "path_trace1": "", "path_trace2": "", "last_failover": 421}]
