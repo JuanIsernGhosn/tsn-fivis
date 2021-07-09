@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from inforeader import NodeReader
+import time
+
 
 class RequestFormatter(ABC):
     def __init__(self, info_reader):
@@ -16,6 +18,8 @@ class RequestFormatter(ABC):
 
 class NodeFormatter(RequestFormatter):
     def __init__(self, tsn_reader: NodeReader):
+        self.time_epoch = time.time()
+        self.init_time_tsn = None
         super(NodeFormatter, self).__init__(tsn_reader)
 
     @staticmethod
@@ -42,8 +46,18 @@ class NodeFormatter(RequestFormatter):
         return schema_temp
 
     def getInformation(self):
-        now = datetime.utcnow()
+
         data_temp = self.info_reader.data()
-        data_temp['ts'] = now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        data_temp['id'] = now.timestamp()
+
+        if data_temp is None:
+            return
+
+        try:
+            data_temp['ts'] = datetime.fromtimestamp((self.time_epoch-7200)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        except Exception as e:
+            data_temp['ts'] = datetime.fromtimestamp((self.time_epoch-7200)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        data_temp['id'] = self.time_epoch - 7200
+
+        self.time_epoch = self.time_epoch + 5
+
         return data_temp

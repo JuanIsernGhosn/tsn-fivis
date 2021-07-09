@@ -15,8 +15,11 @@ class RequestHandler(object):
         return len(self.data) > 0
 
     def readValues(self):
-        self.data.append(self.r_formatter.getInformation())
+        data = self.r_formatter.getInformation()
+        if data is not None:
+            self.data.append(data)
 
     def sendInformation(self):
+        print(self.data)
         self.request_sender.postData(self.data)
         self.data = []

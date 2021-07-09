@@ -3,13 +3,26 @@ import time
 import argparse
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def main(args):
 
     api_config_file = args.apiconfig
     log_folder = args.logfolder
-    app_configurer = ApplicationConfigurer(api_config_file, log_folder)
+    simulate = args.simulate
+    app_configurer = ApplicationConfigurer(api_config_file, log_folder, simulate)
     app = Application(args.time_between_measure, args.send_every)
-    app.addHandlers(app_configurer.geNodeHandlers())
+    handlers = app_configurer.getNodeHandlers()
+    app.addHandlers(handlers)
     app.start()
 
     try:
@@ -24,7 +37,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Record and send TSN data to FIVIS')
     parser.add_argument('--log_folder', dest='logfolder', type=str,
-                        default="../res/TSN_logs/",
+                        default="../res/logs/",
                         help='Path of the folder with the TSN node logs')
     parser.add_argument('--api_config', dest='apiconfig', type=str,
                         default="../res/api_configuration.json",
@@ -33,6 +46,9 @@ if __name__ == "__main__":
                         help='Interval of measurements in seconds')
     parser.add_argument('--send_every', default=1, type=int,
                         help='Number of measures before sending it to FIVIS')
+    parser.add_argument("--simulate", type=str2bool, nargs='?',
+                        const=True, default=False,
+                        help="Activate nice mode.")
 
     args = parser.parse_args()
     main(args)
